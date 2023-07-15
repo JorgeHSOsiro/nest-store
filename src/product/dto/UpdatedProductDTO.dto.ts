@@ -1,25 +1,22 @@
+import { Type } from 'class-transformer';
 import {
-  ArrayMinSize,
-  IsArray,
-  IsDate,
-  IsDecimal,
   IsNotEmpty,
   IsNumber,
-  IsPositive,
-  IsString,
-  IsUUID,
-  MaxLength,
   Min,
+  MaxLength,
+  IsArray,
   ValidateNested,
+  ArrayMinSize,
+  IsOptional,
 } from 'class-validator';
 import { ProductImageDTO } from './ProductImageDTO.dto';
 import { ProductInfoDTO } from './ProductInfoDTO.dto';
-import { Type } from 'class-transformer';
 
-export class ProductDTO {
-  @IsNotEmpty()
+export class UpdatedProductDTO {
+  @IsOptional()
   name: string;
 
+  @IsOptional()
   @IsNumber({
     maxDecimalPlaces: 2,
     allowNaN: false,
@@ -28,35 +25,35 @@ export class ProductDTO {
   @Min(1)
   price: number;
 
+  @IsOptional()
   @IsNumber({ allowInfinity: false, allowNaN: false })
   @Min(0)
   availableQuantity: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @MaxLength(1000)
   description: string;
 
+  @IsOptional()
   @IsArray()
   @ValidateNested()
   @ArrayMinSize(2)
   @Type(() => ProductInfoDTO)
   info: ProductInfoDTO[];
 
+  @IsOptional()
   @IsArray()
   @ValidateNested()
   @ArrayMinSize(1)
   @Type(() => ProductImageDTO)
   images: ProductImageDTO[];
 
-  @IsNotEmpty()
+  @IsOptional()
   category: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   createdAt: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   updatedAt: string;
-
-  @IsUUID()
-  userId: string;
 }
