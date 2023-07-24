@@ -25,8 +25,8 @@ export class ProductController {
     productEntity.price = productInfo.price;
     productEntity.availableQuantity = productInfo.availableQuantity;
     productEntity.description = productInfo.description;
-    productEntity.info = productInfo.info;
-    productEntity.images = productInfo.images;
+    // productEntity.info = productInfo.info;
+    // productEntity.images = productInfo.images;
     productEntity.category = productInfo.category;
     productEntity.createdAt = productInfo.createdAt;
     productEntity.updatedAt = productInfo.updatedAt;
