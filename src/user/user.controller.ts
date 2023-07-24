@@ -13,10 +13,14 @@ import { UserEntity } from './user.entity';
 import { v4 as uuid } from 'uuid';
 import { UserListDTO } from './dto/UserListDTO.dto';
 import { UpdatedUserDTO } from './dto/UpdatedUserDTO.dto';
+import { UserService } from './user.service';
 
 @Controller('/usuarios')
 export class UserController {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private userService: UserService,
+  ) {}
 
   @Post()
   async createUser(@Body() userData: UserDTO) {
@@ -26,7 +30,7 @@ export class UserController {
     userEntity.name = userData.name;
     userEntity.id = uuid();
 
-    this.userRepository.saveUser(userEntity);
+    this.userService.createNewUser(userEntity);
     return {
       user: new UserListDTO(userEntity.id, userEntity.name),
       message: 'Usuario criado com sucesso!',
@@ -35,16 +39,14 @@ export class UserController {
 
   @Get()
   async listUser() {
-    const registeredUserList = await this.userRepository.getUserList();
-    const userList = registeredUserList.map(
-      (user) => new UserListDTO(user.id, user.name),
-    );
+    const userList = await this.userService.listAllUsers();
+
     return userList;
   }
 
   @Put('/:id')
   async updateUser(@Param('id') id: string, @Body() newData: UpdatedUserDTO) {
-    const updatedUser = await this.userRepository.updateUser(id, newData);
+    const updatedUser = await this.userService.updateUser(id, newData);
 
     return {
       user: updatedUser,
@@ -54,7 +56,7 @@ export class UserController {
 
   @Delete('/:id')
   async removeUser(@Param('id') id: string) {
-    const user = await this.userRepository.deleteUser(id);
+    const user = await this.userService.deleteUser(id);
     return {
       user: user,
       message: 'Usuario removido com sucesso!',
