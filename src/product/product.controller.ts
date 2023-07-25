@@ -7,40 +7,26 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { ProductRepository } from './product.repository';
 import { ProductDTO } from './dto/ProductDTO.dto';
-import { ProductEntity } from './product.entity';
-import { v4 as uuid } from 'uuid';
 import { UpdatedProductDTO } from './dto/UpdatedProductDTO.dto';
+import { ProductService } from './product.service';
 
 @Controller('/produtos')
 export class ProductController {
-  constructor(private productRepository: ProductRepository) {}
+  constructor(private productService: ProductService) {}
 
   @Post()
   async postProduct(@Body() productInfo: ProductDTO) {
-    const productEntity = new ProductEntity();
-    productEntity.id = uuid();
-    productEntity.name = productInfo.name;
-    productEntity.price = productInfo.price;
-    productEntity.availableQuantity = productInfo.availableQuantity;
-    productEntity.description = productInfo.description;
-    // productEntity.info = productInfo.info;
-    // productEntity.images = productInfo.images;
-    productEntity.category = productInfo.category;
-    productEntity.createdAt = productInfo.createdAt;
-    productEntity.updatedAt = productInfo.updatedAt;
-    productEntity.userId = productInfo.userId;
-    this.productRepository.saveProducts(productEntity);
+    const newProduct = await this.productService.createProduct(productInfo);
     return {
-      product: productEntity,
+      product: newProduct,
       message: 'Produto cadastrado com sucesso!',
     };
   }
 
   @Get()
   async listProducts() {
-    return this.productRepository.getProduct();
+    return this.productService.listProducts();
   }
 
   @Put('/:id')
@@ -48,10 +34,7 @@ export class ProductController {
     @Param('id') id: string,
     @Body() newData: UpdatedProductDTO,
   ) {
-    const updatedProduct = await this.productRepository.updateProduct(
-      id,
-      newData,
-    );
+    const updatedProduct = await this.productService.updateProduct(id, newData);
 
     return {
       product: updatedProduct,
@@ -61,10 +44,10 @@ export class ProductController {
 
   @Delete('/:id')
   async removeProduct(@Param('id') id: string) {
-    const product = await this.productRepository.deleteProduct(id);
+    const product = await this.productService.deleteProduct(id);
     return {
-      product: product.name,
-      message: 'Producto removido com sucesso!',
+      product: product,
+      message: 'Produto removido com sucesso!',
     };
   }
 }
