@@ -56,7 +56,4 @@ export class ProductDTO {
 
   @IsNotEmpty()
   updatedAt: string;
-
-  @IsUUID()
-  userId: string;
 }

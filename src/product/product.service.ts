@@ -24,7 +24,6 @@ export class ProductService {
     productEntity.category = productInfo.category;
     productEntity.createdAt = productInfo.createdAt;
     productEntity.updatedAt = productInfo.updatedAt;
-    productEntity.userId = productInfo.userId;
 
     return this.productRepository.save(productEntity);
   }
