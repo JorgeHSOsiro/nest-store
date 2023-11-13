@@ -10,6 +10,7 @@ import {
 
 import { ProductImageEntity } from './productImage.entity';
 import { ProductInfoEntity } from './productInfo.entity';
+import { OrderItemEntity } from '../order/orderItem.entity';
 
 @Entity({
   name: 'products',
@@ -55,4 +56,7 @@ export class ProductEntity {
 
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: string;
+
+  @OneToMany(() => OrderItemEntity, (item) => item.product)
+  orderedItem: OrderItemEntity[];
 }

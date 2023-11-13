@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from './product.entity';
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductDTO } from './dto/ProductDTO.dto';
 import { UpdatedProductDTO } from './dto/UpdatedProductDTO.dto';
 
@@ -12,18 +12,10 @@ export class ProductService {
     private readonly productRepository: Repository<ProductEntity>,
   ) {}
 
-  async createProduct(productInfo: ProductDTO) {
+  async createProduct(productData: ProductDTO) {
     const productEntity = new ProductEntity();
 
-    productEntity.name = productInfo.name;
-    productEntity.price = productInfo.price;
-    productEntity.availableQuantity = productInfo.availableQuantity;
-    productEntity.description = productInfo.description;
-    productEntity.info = productInfo.info;
-    productEntity.images = productInfo.images;
-    productEntity.category = productInfo.category;
-    productEntity.createdAt = productInfo.createdAt;
-    productEntity.updatedAt = productInfo.updatedAt;
+    Object.assign(productEntity, productData as ProductEntity);
 
     return this.productRepository.save(productEntity);
   }
@@ -32,11 +24,20 @@ export class ProductService {
     return await this.productRepository.find();
   }
 
-  async updateProduct(id: string, productEntity: UpdatedProductDTO) {
-    await this.productRepository.update(id, productEntity);
+  async updateProduct(id: string, newData: UpdatedProductDTO) {
+    const product = await this.productRepository.findOneBy({ id });
+    if (!product) {
+      throw new NotFoundException('O produto não foi encontrado');
+    }
+    Object.assign(product, newData as ProductEntity);
+
+    await this.productRepository.save(product);
   }
 
   async deleteProduct(id: string) {
-    await this.productRepository.delete(id);
+    const deletedProduct = await this.productRepository.delete(id);
+    if (!deletedProduct.affected) {
+      throw new NotFoundException('O produto não foi encontrado');
+    }
   }
 }

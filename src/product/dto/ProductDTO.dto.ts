@@ -1,13 +1,8 @@
 import {
   ArrayMinSize,
   IsArray,
-  IsDate,
-  IsDecimal,
   IsNotEmpty,
   IsNumber,
-  IsPositive,
-  IsString,
-  IsUUID,
   MaxLength,
   Min,
   ValidateNested,
